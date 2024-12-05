@@ -10,8 +10,8 @@
 - **Database Management**: Persistent data storage using PostgreSQL.
 - **API-Driven Architecture**: RESTful API for seamless communication between frontend and backend.
 - **Security**: Implementation of best practices for data validation, authentication, and authorization.
-
----
+ 
+--- 
 
 ## Tech Stack
 
