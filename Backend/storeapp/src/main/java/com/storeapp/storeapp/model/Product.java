@@ -1,4 +1,4 @@
-package com.storeapp.storeapp;
+package com.storeapp.storeapp.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -39,5 +39,17 @@ public class Product {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-}
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
+}

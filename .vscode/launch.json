@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "StoreApplication",
+            "request": "launch",
+            "mainClass": "com.storeapp.storeapp.StoreApplication",
+            "projectName": "storeapp"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-StoreappApplication<storeapp>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.storeapp.storeapp.StoreappApplication",
+            "projectName": "storeapp",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=52326 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=storeapp"
+        }
+    ]
+}
