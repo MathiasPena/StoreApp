@@ -1,7 +1,10 @@
 package com.storeapp.storeapp;
 
 import com.storeapp.storeapp.model.Product;
+import com.storeapp.storeapp.model.User;
 import com.storeapp.storeapp.repository.ProductRepository;
+import com.storeapp.storeapp.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +17,9 @@ public class StoreApplication implements CommandLineRunner {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(StoreApplication.class, args);
@@ -31,6 +37,16 @@ public class StoreApplication implements CommandLineRunner {
             System.out.println("No se encontraron productos en la base de datos.");
         } else {
             products.forEach(product -> System.out.println(product));
+        }
+
+        // Obtener todos los usuarios
+        List<User> usuarios = userRepository.findAll();
+
+        // Mostrar productos en la consola
+        if (usuarios.isEmpty()) {
+            System.out.println("No se encontraron usuarios en la base de datos.");
+        } else {
+            usuarios.forEach(usuario -> System.out.println(usuario));
         }
     }
 }
