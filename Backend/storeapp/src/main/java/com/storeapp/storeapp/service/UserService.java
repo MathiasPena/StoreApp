@@ -2,7 +2,6 @@ package com.storeapp.storeapp.service;
 
 import com.storeapp.storeapp.model.User;
 import com.storeapp.storeapp.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public List<User> findAllUsers() {
         return userRepository.findAll();

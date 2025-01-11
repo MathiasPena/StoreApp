@@ -27,6 +27,7 @@ public class StoreApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
         System.out.println("Leyendo productos de la base de datos...");
 
         // Obtener todos los productos
