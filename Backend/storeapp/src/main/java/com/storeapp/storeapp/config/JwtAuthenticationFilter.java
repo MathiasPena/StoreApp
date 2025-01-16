@@ -1,8 +1,10 @@
 package com.storeapp.storeapp.config;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,12 +34,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
             String username = jwtTokenProvider.getUsernameFromToken(token);
+
+            // Obtener el rol desde el token
+            String role = jwtTokenProvider.getRoleFromToken(token);
+
+            // Crear autoridad a partir del rol
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
+
+            // Cargar los detalles del usuario
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
+            // Crear la autenticación con el rol
             UsernamePasswordAuthenticationToken authentication = 
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                new UsernamePasswordAuthenticationToken(userDetails, null, List.of(authority));
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+            // Establecer la autenticación en el contexto de seguridad
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 

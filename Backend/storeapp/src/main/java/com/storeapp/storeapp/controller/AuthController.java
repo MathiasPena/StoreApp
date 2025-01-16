@@ -1,7 +1,5 @@
 package com.storeapp.storeapp.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,11 +46,17 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+        // Obtener el rol del usuario
+        String role = userDetails.getAuthorities().stream()
+                .findFirst() // Como hay un solo rol, tomamos el primero
+                .map(GrantedAuthority::getAuthority) // Extraemos el nombre del rol (e.g., "ROLE_ADMIN")
+                .orElseThrow(() -> new RuntimeException("El usuario no tiene un rol asignado"));
 
-        String token = jwtTokenProvider.createToken(userDetails.getUsername(), roles);
+        // Remover el prefijo "ROLE_" para simplificar el almacenamiento del rol en el
+        // token
+        role = role.replace("ROLE_", "");
+
+        String token = jwtTokenProvider.createToken(userDetails.getUsername(), role);
 
         return ResponseEntity.ok(new JwtResponse(token));
     }

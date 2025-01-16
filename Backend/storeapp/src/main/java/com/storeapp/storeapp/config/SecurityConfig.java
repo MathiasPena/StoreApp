@@ -46,8 +46,16 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                // Rutas públicas
                 .requestMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated())
+
+                // Rutas protegidas por roles
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/client/**").hasRole("CLIENT")
+
+                // Todas las demás rutas requieren autenticación
+                .anyRequest().authenticated()
+            )
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
