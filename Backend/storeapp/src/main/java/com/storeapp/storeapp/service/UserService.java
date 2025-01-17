@@ -1,6 +1,7 @@
 package com.storeapp.storeapp.service;
 
 import com.storeapp.storeapp.dto.UserRegistrationDTO;
+import com.storeapp.storeapp.exception.ResourceNotFoundException;
 import com.storeapp.storeapp.model.User;
 import com.storeapp.storeapp.repository.UserRepository;
 
@@ -8,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -43,23 +43,24 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> findUserById(Long id) {
-        return userRepository.findById(id);
+    public User findUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
-    public Optional<User> findUserByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    public User saveUser(User user) {
+    public User createUser(User user) {
         return userRepository.save(user);
     }
 
-    public void deleteUserById(Long id) {
+    public User updateUser(Long id, User updatedUser) {
+        User existingUser = findUserById(id);
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setPassword(updatedUser.getPassword());
+        existingUser.setRole(updatedUser.getRole());
+        return userRepository.save(existingUser);
+    }
+
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 }
