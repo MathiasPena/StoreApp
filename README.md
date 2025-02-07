@@ -2,7 +2,7 @@
  
 **Store App** is a full-stack application designed to manage a store's products efficiently. Built with a Spring Boot backend and a Vanilla JavaScript frontend, it ensures a secure and scalable solution for handling product inventory, user authentication, and more.
  
-## Features   
+## Features    
 
 - **Product Management**: Create, read, update, and delete (CRUD) operations for products.
 - **User Authentication**: Token-based authentication using JWT for secure login and session management.
