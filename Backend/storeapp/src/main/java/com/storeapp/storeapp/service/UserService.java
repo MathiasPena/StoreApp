@@ -1,14 +1,17 @@
 package com.storeapp.storeapp.service;
 
+import com.storeapp.storeapp.dto.UserDTO;
 import com.storeapp.storeapp.dto.UserRegistrationDTO;
-import com.storeapp.storeapp.exception.ResourceNotFoundException;
 import com.storeapp.storeapp.model.User;
 import com.storeapp.storeapp.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -39,29 +42,41 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> findAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     public User findUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
-
-    public User createUser(User user) {
+    public User createUser(UserDTO userDTO) {
+        User user = new User();
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setRole(userDTO.getRole());
         return userRepository.save(user);
     }
 
-    public User updateUser(Long id, User updatedUser) {
+    public User updateUser(Long id, UserDTO userDTO) {
         User existingUser = findUserById(id);
-        existingUser.setUsername(updatedUser.getUsername());
-        existingUser.setPassword(updatedUser.getPassword());
-        existingUser.setRole(updatedUser.getRole());
+        existingUser.setUsername(userDTO.getUsername());
+        existingUser.setRole(userDTO.getRole());
         return userRepository.save(existingUser);
     }
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
-}
 
+    private UserDTO convertToDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
+        return dto;
+    }
+}
