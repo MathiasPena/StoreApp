@@ -1,5 +1,6 @@
 package com.storeapp.storeapp.service;
 
+import com.storeapp.storeapp.dto.UserCreationDTO;
 import com.storeapp.storeapp.dto.UserDTO;
 import com.storeapp.storeapp.dto.UserRegistrationDTO;
 import com.storeapp.storeapp.model.User;
@@ -24,6 +25,34 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public List<UserDTO> findAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public User findUserById(Long id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    public void createUser(UserCreationDTO userCreationDTO) {
+        if (userRepository.existsByUsername(userCreationDTO.getUsername())) {
+            throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
+        }
+
+        if (userRepository.existsByEmail(userCreationDTO.getEmail())) {
+            throw new IllegalArgumentException("El email ya está en uso.");
+        }
+
+        User user = new User();
+        user.setUsername(userCreationDTO.getUsername());
+        user.setEmail(userCreationDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userCreationDTO.getPassword()));
+        user.setRole(userCreationDTO.getRole());
+        userRepository.save(user);
+    }
+
     public void registerClient(UserRegistrationDTO userRegistrationDTO) {
         if (userRepository.existsByUsername(userRegistrationDTO.getUsername())) {
             throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
@@ -40,24 +69,6 @@ public class UserService {
         user.setRole("CLIENT");
 
         userRepository.save(user);
-    }
-
-    public List<UserDTO> findAllUsers() {
-        return userRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    public User findUserById(Long id) {
-        return userRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("User not found"));
-    }
-    public User createUser(UserDTO userDTO) {
-        User user = new User();
-        user.setUsername(userDTO.getUsername());
-        user.setEmail(userDTO.getEmail());
-        user.setRole(userDTO.getRole());
-        return userRepository.save(user);
     }
 
     public User updateUser(Long id, UserDTO userDTO) {

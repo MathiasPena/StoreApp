@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.storeapp.storeapp.dto.UserCreationDTO;
 import com.storeapp.storeapp.dto.UserDTO;
 import com.storeapp.storeapp.model.User;
 import com.storeapp.storeapp.service.UserService;
@@ -40,15 +41,15 @@ public class AdminUserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
-        User createdUser = userService.createUser(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    public ResponseEntity<Void> createUser(@RequestBody UserCreationDTO userCreationDTO) {
+        userService.createUser(userCreationDTO);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
-        User updatedUser = userService.updateUser(id, userDTO);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+        userService.updateUser(id, userDTO);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
