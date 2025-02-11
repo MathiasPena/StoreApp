@@ -30,7 +30,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private boolean enabled;
+    private boolean active;
 
     @Override
     public String toString() {
@@ -100,11 +100,11 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public boolean getEnabled() {
-        return enabled;
+    public boolean getActive() {
+        return active;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(boolean active) {
+        this.active = active;
     }   
 }

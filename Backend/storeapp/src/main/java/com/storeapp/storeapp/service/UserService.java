@@ -4,6 +4,7 @@ import com.storeapp.storeapp.dto.UserCreationDTO;
 import com.storeapp.storeapp.dto.UserDTO;
 import com.storeapp.storeapp.dto.UserRegistrationDTO;
 import com.storeapp.storeapp.dto.UserUpdateDTO;
+import com.storeapp.storeapp.exception.ResourceNotFoundException;
 import com.storeapp.storeapp.model.User;
 import com.storeapp.storeapp.repository.UserRepository;
 
@@ -51,7 +52,7 @@ public class UserService {
         user.setEmail(userCreationDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userCreationDTO.getPassword()));
         user.setRole(userCreationDTO.getRole());
-        user.setEnabled(true);
+        user.setActive(true);
         userRepository.save(user);
     }
 
@@ -69,7 +70,7 @@ public class UserService {
         user.setEmail(userRegistrationDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
         user.setRole("CLIENT");
-        user.setEnabled(true);
+        user.setActive(true);
 
         userRepository.save(user);
     }
@@ -84,7 +85,10 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        user.setActive(false);
+        userRepository.save(user);
     }
 
     private UserDTO convertToDTO(User user) {
