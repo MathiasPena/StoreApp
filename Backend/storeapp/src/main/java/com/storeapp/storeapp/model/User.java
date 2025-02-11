@@ -29,6 +29,9 @@ public class User {
     @Column(name = "updated_at", insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
+    private boolean enabled;
+
     @Override
     public String toString() {
         return "User{" +
@@ -97,6 +100,11 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    // Getters y setters
-    
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }   
 }

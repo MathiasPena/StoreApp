@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.storeapp.storeapp.dto.UserCreationDTO;
 import com.storeapp.storeapp.dto.UserDTO;
+import com.storeapp.storeapp.dto.UserUpdateDTO;
 import com.storeapp.storeapp.model.User;
 import com.storeapp.storeapp.service.UserService;
 
@@ -47,8 +48,8 @@ public class AdminUserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
-        userService.updateUser(id, userDTO);
+    public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody UserUpdateDTO userUpdateDTO) {
+        userService.updateUser(id, userUpdateDTO);
         return ResponseEntity.ok().build();
     }
 
