@@ -35,7 +35,7 @@ public class UserService {
 
     public User findUserById(Long id) {
         return userRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Usuario con ID: " + id + " no encontrado"));
     }
 
     public void createUser(UserCreationDTO userCreationDTO) {
