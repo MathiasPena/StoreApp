@@ -9,6 +9,16 @@
             "projectName": "storeapp",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-StoreApplication<storeapp>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.storeapp.storeapp.StoreApplication",
+            "projectName": "storeapp",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

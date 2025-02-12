@@ -4,17 +4,16 @@ import com.storeapp.storeapp.dto.UserCreationDTO;
 import com.storeapp.storeapp.dto.UserDTO;
 import com.storeapp.storeapp.dto.UserRegistrationDTO;
 import com.storeapp.storeapp.dto.UserUpdateDTO;
+import com.storeapp.storeapp.exception.EmailAlreadyExistsException;
 import com.storeapp.storeapp.exception.ResourceNotFoundException;
+import com.storeapp.storeapp.exception.UsernameAlreadyExistsException;
 import com.storeapp.storeapp.model.User;
 import com.storeapp.storeapp.repository.UserRepository;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -30,7 +29,7 @@ public class UserService {
     public List<UserDTO> findAllUsers() {
         return userRepository.findAll().stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public User findUserById(Long id) {
@@ -40,12 +39,12 @@ public class UserService {
 
     public void createUser(UserCreationDTO userCreationDTO) {
         if (userRepository.existsByUsername(userCreationDTO.getUsername())) {
-            throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
-        }
+        throw new UsernameAlreadyExistsException("El nombre de usuario ya está en uso.");
+    }
 
-        if (userRepository.existsByEmail(userCreationDTO.getEmail())) {
-            throw new IllegalArgumentException("El email ya está en uso.");
-        }
+    if (userRepository.existsByEmail(userCreationDTO.getEmail())) {
+        throw new EmailAlreadyExistsException("El email ya está en uso.");
+    }
 
         User user = new User();
         user.setUsername(userCreationDTO.getUsername());
@@ -58,11 +57,11 @@ public class UserService {
 
     public void registerClient(UserRegistrationDTO userRegistrationDTO) {
         if (userRepository.existsByUsername(userRegistrationDTO.getUsername())) {
-            throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
+            throw new UsernameAlreadyExistsException("El nombre de usuario ya está en uso.");
         }
-
+    
         if (userRepository.existsByEmail(userRegistrationDTO.getEmail())) {
-            throw new IllegalArgumentException("El email ya está en uso.");
+            throw new EmailAlreadyExistsException("El email ya está en uso.");
         }
 
         User user = new User();
@@ -77,16 +76,30 @@ public class UserService {
 
     public User updateUser(Long id, UserUpdateDTO userUpdateDTO) {
         User existingUser = findUserById(id);
+
+        // Solo actualiza los campos que recibes
+    if (userUpdateDTO.getUsername() != null) {
         existingUser.setUsername(userUpdateDTO.getUsername());
-        existingUser.setRole(userUpdateDTO.getRole());
+    }
+    if (userUpdateDTO.getEmail() != null) {
         existingUser.setEmail(userUpdateDTO.getEmail());
+    }
+    if (userUpdateDTO.getRole() != null) {
+        existingUser.setRole(userUpdateDTO.getRole());
+    }
+    if (userUpdateDTO.getPassword() != null) {
         existingUser.setPassword(passwordEncoder.encode(userUpdateDTO.getPassword()));
+    }
         return userRepository.save(existingUser);
     }
 
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        User user = findUserById(id);
+
+        if (!user.isActive()) {
+            throw new IllegalStateException("El usuario ya está inactivo.");
+        }
+
         user.setActive(false);
         userRepository.save(user);
     }

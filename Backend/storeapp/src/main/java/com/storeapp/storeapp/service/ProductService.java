@@ -1,7 +1,6 @@
 package com.storeapp.storeapp.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,7 @@ public class ProductService {
     public List<ProductDTO> findAllProducts() {
         return productRepository.findAll().stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Product findProductById(Long id) {

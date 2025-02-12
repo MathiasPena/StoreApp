@@ -100,7 +100,7 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 

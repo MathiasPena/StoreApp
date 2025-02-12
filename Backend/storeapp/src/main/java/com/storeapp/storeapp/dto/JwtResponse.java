@@ -1,6 +1,7 @@
 package com.storeapp.storeapp.dto;
 
 public class JwtResponse {
+    
     private String token;
 
     public JwtResponse(String token) {

@@ -1,14 +1,21 @@
 package com.storeapp.storeapp.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class UserUpdateDTO {
 
+    @Size(min = 3, max = 50, message = "El nombre de usuario debe tener entre 3 y 50 caracteres.")
     private String username;
 
+    @Email(message = "El email debe ser válido.")
     private String email;
 
+    @Size(min = 6, max = 255, message = "La contraseña debe tener al menos 6 caracteres.")
     private String password;
 
+    @Pattern(regexp = "CLIENT|ADMIN", message = "El rol debe ser CLIENT o ADMIN.")
     private String role;
 
     public String getUsername() {
