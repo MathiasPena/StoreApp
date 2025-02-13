@@ -5,10 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.storeapp.storeapp.dto.ProductDTO;
+import com.storeapp.storeapp.exception.ResourceNotFoundException;
 import com.storeapp.storeapp.model.Product;
 import com.storeapp.storeapp.repository.ProductRepository;
-
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ProductService {
@@ -27,29 +26,49 @@ public class ProductService {
 
     public Product findProductById(Long id) {
         return productRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto con ID: " + id + " no encontrado"));
     }
 
-    public Product createProduct(ProductDTO productDTO) {
+    public void createProduct(ProductDTO productDTO) {
         Product product = new Product();
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
         product.setStock(productDTO.getStock());
-        return productRepository.save(product);
+        productRepository.save(product);
     }
 
-    public Product updateProduct(Long id, ProductDTO productDTO) {
+    public void updateProduct(Long id, ProductDTO productDTO) {
         Product existingProduct = findProductById(id);
-        existingProduct.setName(productDTO.getName());
-        existingProduct.setDescription(productDTO.getDescription());
-        existingProduct.setPrice(productDTO.getPrice());
-        existingProduct.setStock(productDTO.getStock());
-        return productRepository.save(existingProduct);
+
+        if (productDTO.getName() != null) {
+            existingProduct.setName(productDTO.getName());
+        }
+
+        if (productDTO.getDescription() != null) {
+            existingProduct.setDescription(productDTO.getDescription());
+        }
+
+        if (productDTO.getPrice() != null) {
+            existingProduct.setPrice(productDTO.getPrice());
+        }
+
+        if (productDTO.getStock() != null) {
+            existingProduct.setStock(productDTO.getStock());
+        }
+
+        productRepository.save(existingProduct);
     }
 
     public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+        Product product = findProductById(id);
+
+        if (!product.isActive()) {
+            throw new IllegalStateException("El producto ya está inactivo.");
+        }
+
+        product.setActive(false);
+        productRepository.save(product);
     }
 
     private ProductDTO convertToDTO(Product product) {
