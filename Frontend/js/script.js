@@ -3,6 +3,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+    const errorMessage = document.getElementById('error-message');
 
     try {
         const response = await fetch('http://127.0.0.1:8080/auth/login', {
@@ -32,10 +33,14 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 window.location.href = '/client.html';  // Redirige a la página de cliente
             }
         } else {
-            console.error('Error en el login:', await response.text());
+            const errorText = await response.json();
+            errorMessage.textContent = errorText.error || 'Usuario o contraseña incorrectos';
+            errorMessage.style.display = 'block';
         }
     } catch (error) {
         console.error('Error:', error);
+        errorMessage.textContent = 'Error de conexión con el servidor';
+        errorMessage.style.display = 'block';
     }
 });
 

@@ -77,6 +77,20 @@ button:hover {
     background: #2a7e3f;
 }
 
+.error-message {
+    display: none;
+    background: #ffdddd;
+    color: #d8000c;
+    border: 1px solid #d8000c;
+    padding: 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+
 @media (max-width: 480px) {
     .login-container {
         margin: 1rem;
