@@ -1,7 +1,9 @@
 package com.storeapp.storeapp.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,26 +41,32 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+    public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
-        // Obtener el rol del usuario
-        String role = userDetails.getAuthorities().stream()
-                .findFirst() // Como hay un solo rol, tomamos el primero
-                .map(GrantedAuthority::getAuthority) // Extraemos el nombre del rol (e.g., "ROLE_ADMIN")
-                .orElseThrow(() -> new RuntimeException("El usuario no tiene un rol asignado"));
+            UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
+            // Obtener el rol del usuario
+            String role = userDetails.getAuthorities().stream()
+                    .findFirst() // Como hay un solo rol, tomamos el primero
+                    .map(GrantedAuthority::getAuthority) // Extraemos el nombre del rol (e.g., "ROLE_ADMIN")
+                    .orElseThrow(() -> new RuntimeException("El usuario no tiene un rol asignado"));
 
-        // Remover el prefijo "ROLE_" para simplificar el almacenamiento del rol en el
-        // token
-        role = role.replace("ROLE_", "");
+            // Remover el prefijo "ROLE_" para simplificar el almacenamiento del rol en el
+            // token
+            role = role.replace("ROLE_", "");
 
-        String token = jwtTokenProvider.createToken(userDetails.getUsername(), role);
+            String token = jwtTokenProvider.createToken(userDetails.getUsername(), role);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+            return ResponseEntity.ok(new JwtResponse(token));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario o contraseña incorrectos.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en el servidor.");
+        }
     }
 
     @PostMapping("/register")
