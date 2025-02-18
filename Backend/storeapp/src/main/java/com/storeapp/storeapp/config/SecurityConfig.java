@@ -11,6 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -26,12 +28,12 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = 
-            http.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManagerBuilder authenticationManagerBuilder = http
+                .getSharedObject(AuthenticationManagerBuilder.class);
 
         authenticationManagerBuilder
-            .userDetailsService(userDetailsService)
-            .passwordEncoder(passwordEncoder());
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
 
         return authenticationManagerBuilder.build();
     }
@@ -44,19 +46,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                // Rutas públicas
-                .requestMatchers("/auth/**").permitAll()
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of("http://127.0.0.1:5500")); // Permite tu frontend
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
+                .authorizeHttpRequests(auth -> auth
+                        // Rutas públicas
+                        .requestMatchers("/auth/**").permitAll()
 
-                // Rutas protegidas por roles
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/client/**").hasRole("CLIENT")
+                        // Rutas protegidas por roles
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/client/**").hasRole("CLIENT")
 
-                // Todas las demás rutas requieren autenticación
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                        // Todas las demás rutas requieren autenticación
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
