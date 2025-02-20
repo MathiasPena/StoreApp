@@ -45,6 +45,5 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 });
 
 document.getElementById('registerBtn').addEventListener('click', () => {
-    // Lógica para registro
-    console.log('Redirigir a página de registro');
+    window.location.href = '/register.html';
 });
