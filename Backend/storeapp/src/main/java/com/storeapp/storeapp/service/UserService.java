@@ -10,6 +10,7 @@ import com.storeapp.storeapp.exception.UsernameAlreadyExistsException;
 import com.storeapp.storeapp.model.User;
 import com.storeapp.storeapp.repository.UserRepository;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -93,6 +94,24 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    public User updateUserByUsername(String username, UserUpdateDTO userUpdateDTO) {
+    User existingUser = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+    // Solo actualiza los campos que recibes
+    if (userUpdateDTO.getUsername() != null) {
+        existingUser.setUsername(userUpdateDTO.getUsername());
+    }
+    if (userUpdateDTO.getEmail() != null) {
+        existingUser.setEmail(userUpdateDTO.getEmail());
+    }
+    if (userUpdateDTO.getPassword() != null) {
+        existingUser.setPassword(passwordEncoder.encode(userUpdateDTO.getPassword()));
+    }
+
+    return userRepository.save(existingUser);
+}
+
     public void deleteUser(Long id) {
         User user = findUserById(id);
 
@@ -100,6 +119,18 @@ public class UserService {
             throw new IllegalStateException("El usuario ya está inactivo.");
         }
 
+        user.setActive(false);
+        userRepository.save(user);
+    }
+
+    public void deleteUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+    
+        if (!user.isActive()) {
+            throw new IllegalStateException("El usuario ya está inactivo.");
+        }
+    
         user.setActive(false);
         userRepository.save(user);
     }
