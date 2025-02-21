@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <h2>Admin Panel</h2>
+            <nav>
+                <ul>
+                    <li><a href="#" id="products-tab">Productos</a></li>
+                    <li><a href="#" id="users-tab">Usuarios</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <section id="products-section">
+                <h1>Gestión de Productos</h1>
+                <input type="text" id="search-products" placeholder="Buscar producto...">
+                <button id="add-product">Añadir Producto</button>
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+            
+            <section id="users-section" style="display:none;">
+                <h1>Gestión de Usuarios</h1>
+                <input type="text" id="search-users" placeholder="Buscar usuario...">
+                <button id="add-user">Añadir Usuario</button>
+                <table id="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+    <script src="admin.js"></script>
+</body>
+</html>
