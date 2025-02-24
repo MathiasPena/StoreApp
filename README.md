@@ -23,4 +23,4 @@
 
 ### Frontend
 - **Vanilla JavaScript**: Lightweight frontend for user interactions and API calls.
-- **HTML5 & CSS3**: Structure and styling for the application interface.
+- **HTML5 & CSS3**: Structure and styling for the application interface. 
