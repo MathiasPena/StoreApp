@@ -14,7 +14,7 @@
 --- 
 
 ## Tech Stack
-
+ 
 ### Backend
 - **Spring Boot**: Framework for building the REST API and handling business logic.
 - **PostgreSQL**: Relational database for secure and efficient data storage.
