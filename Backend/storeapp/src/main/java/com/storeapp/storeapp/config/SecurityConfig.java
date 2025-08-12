@@ -58,6 +58,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Rutas públicas
                         .requestMatchers("/auth/**").permitAll()
+                        // Sales publicas para testeo sin token
+                        .requestMatchers("/sales/**").permitAll()
 
                         // Rutas protegidas por roles
                         .requestMatchers("/admin/**").hasRole("ADMIN")
